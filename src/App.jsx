@@ -1,10 +1,12 @@
-import { useQuery } from "react-query";
-import { fetcher } from "./assets/libs/api";
+import { Route, Routes } from "react-router-dom";
+import Home from "./Home";
+import Weather from "./Weather";
 
-function App() {
-  const { isLoading, data } = useQuery("test", fetcher);
-  <h1>HI</h1>;
-  return <>{isLoading ? "Loading..." : <p>{JSON.stringify(data)}</p>}</>;
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/weather" element={<Weather />} />
+    </Routes>
+  );
 }
-
-export default App;
