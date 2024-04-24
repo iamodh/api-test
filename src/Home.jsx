@@ -9,24 +9,24 @@ export default function Home() {
     ["businessLists"],
     getBusinessLists
   );
-  useEffect(() => {
-    // use effect를 활용하여 fetch가 끝나면 받아온 데이터를 db table schema에 맞추어 가공 및 insert
-    if (!isLoading && !isError && data) {
-      const saveData = data.data
-        .filter((list) => list["카테고리명"] === "레저/체육/공원")
-        .filter((list) => list["도로명"])
-        .filter((list) => list["전화번호"])
-        .map((item) => ({
-          business_name: item.업체명,
-          business_address: item.도로명,
-          business_contact: item.전화번호,
-          is_open: item.폐업여부 === "N" ? "true" : "false",
-          is_home: item.홈페이지주소 ? "true" : "false",
-        }));
-      console.log(saveData);
-      getBusiness(saveData);
-    }
-  }, [data, isLoading, isError]);
+  // useEffect(() => {
+  //   // use effect를 활용하여 fetch가 끝나면 받아온 데이터를 db table schema에 맞추어 가공 및 insert
+  //   if (!isLoading && !isError && data) {
+  //     const saveData = data.data
+  //       .filter((list) => list["카테고리명"] === "레저/체육/공원")
+  //       .filter((list) => list["도로명"])
+  //       .filter((list) => list["전화번호"])
+  //       .map((item) => ({
+  //         business_name: item.업체명,
+  //         business_address: item.도로명,
+  //         business_contact: item.전화번호,
+  //         is_open: item.폐업여부 === "N" ? "true" : "false",
+  //         is_home: item.홈페이지주소 ? "true" : "false",
+  //       }));
+  //     console.log(saveData);
+  //     getBusiness(saveData);
+  //   }
+  // }, [data, isLoading, isError]);
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error: {error.message}</div>;
