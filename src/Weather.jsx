@@ -3,7 +3,14 @@ import { getWeather } from "../libs/getWeather";
 import { useQuery } from "react-query";
 
 export default function Weather() {
-  const { isLoading, data } = useQuery(["weatherInfo"], getWeather);
+  const { isLoading: weatherLoading, data: weatherData } = useQuery(
+    ["weatherInfo"],
+    getWeather
+  );
+  const { isLoading: beachWeatherLoading, data: beachWeatherData } = useQuery(
+    ["beachWeatherInfo"],
+    getBeachWeather
+  );
 
   return (
     <>
@@ -11,14 +18,15 @@ export default function Weather() {
         <h1>Weather</h1>
         <Link to="/">Home</Link>
       </header>
-      {isLoading ? (
+      {weatherLoading ? (
         "Loading..."
       ) : (
         <>
+          <h2>부산의 날씨</h2>
           <img
-            src={`https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`}
+            src={`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`}
           />
-          <p>{JSON.stringify(data)}</p>
+          <p>{JSON.stringify(weatherData)}</p>
         </>
       )}
     </>
