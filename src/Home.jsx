@@ -20,6 +20,13 @@ export default function Home() {
 
   return (
     <>
+      <header>
+        <h1>DATA</h1>
+        <Link to="/weather">Weather</Link>
+        <h1>Login</h1>
+        <Link to="/login">Login</Link>
+      </header>
+      ;
       <ul>
         {list.map((business) => (
           <li key={business.id}>{business.business_name}</li>
@@ -55,11 +62,6 @@ export default function Home() {
 
 // if (isLoading) return <div>Loading...</div>;
 // if (isError) return <div>Error: {error.message}</div>;
-
-/* <header>
-        <h1>DATA</h1>
-        <Link to="/weather">Weather</Link>
-      </header> */
 
 /* {isLoading ? (
         "Loading..."
