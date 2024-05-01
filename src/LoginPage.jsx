@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 export default function Login() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loggedUser, setLoggedUser] = useState(null);
+  const [loggedUserProfile, setLoggedUserProfile] = useState(null);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [signUpEmail, setSignUpEmail] = useState("");
@@ -62,8 +63,14 @@ export default function Login() {
       } = await supabase.auth.getUser();
       setLoggedUser(user);
     }
+    if (loggedUser) {
+      let { data: user_profile, error } = await supabase
+        .from("user_profile")
+        .select("user_id");
+      setLoggedUserProfile(user_profile[0]);
+    }
     if (authInfo.error) console.log(authInfo.error);
-    console.log(loggedUser);
+    console.log(loggedUser, loggedUserProfile);
     setIsLoggedIn(!!session);
   }
 
@@ -71,9 +78,46 @@ export default function Login() {
     const { error } = await supabase.auth.signOut();
     checkLogin();
   }
+
+  async function updateUserProfile() {
+    const { data, error } = await supabase.from("user_profile").insert([
+      {
+        user_name: userName,
+        avatar_url:
+          "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
+        user_id: loggedUser.id,
+      },
+    ]);
+    console.log(loggedUser.id);
+    if (error) console.log(userName, error);
+  }
+
   useEffect(() => {
     checkLogin();
   }, []);
+
+  useEffect(() => {
+    if (loggedUser) {
+      console.log("Logged user:", loggedUser);
+      // 유저 프로파일 가져오는 로직을 여기에 넣기
+      async function fetchUserProfile() {
+        const { data: userProfile, error } = await supabase
+          .from("user_profile")
+          .select("*")
+          .eq("user_id", loggedUser.id);
+        if (error) {
+          console.log("Error fetching user profile:", error);
+        } else {
+          setLoggedUserProfile(userProfile[0]);
+          console.log("User profile:", userProfile[0]);
+        }
+        console.log(loggedUserProfile);
+      }
+
+      fetchUserProfile();
+    }
+  }, [loggedUser]);
+
   return (
     <>
       <div className="login-box">
@@ -117,14 +161,6 @@ export default function Login() {
                 value={signUpPassword}
                 onChange={(e) => setSignUpPassword(e.target.value)}
               ></input>
-              <input
-                className="userName"
-                type="text"
-                placeholder="이름"
-                name="userName"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-              ></input>
               <button className="signUpBtn" onClick={userSignUp}>
                 회원가입
               </button>
@@ -145,6 +181,19 @@ export default function Login() {
             <p>{loggedUser.email}</p>
             <p>{loggedUser.user_metadata.user_name}</p>
             <img src={loggedUser.user_metadata.avatar_url} alt="" />
+            <form className="updateBox" onSubmit={(e) => e.preventDefault()}>
+              <input
+                className="userName"
+                type="text"
+                placeholder="이름"
+                name="userName"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+              ></input>
+              <button className="updateBtn" onClick={updateUserProfile}>
+                업데이트
+              </button>
+            </form>
           </>
         )}
       </div>
